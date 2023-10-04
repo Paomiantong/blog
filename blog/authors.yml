@@ -1,0 +1,15 @@
+bkt:
+  name: ExBucket_
+  title: 咕噜咕噜
+  url: https://github.com/Paomiantong
+  image_url: https://avatars.githubusercontent.com/u/34201690?v=4
+  social_links:
+    # - name: 哔哩哔哩
+    #   url: https://space.bilibili.com/660303135
+    #   icon: https://www.bilibili.com/favicon.ico
+    - name: GitHub
+      url: https://github.com/Paomiantong
+      icon: https://p5.music.126.net/obj/wonDlsKUwrLClGjCm8Kx/28055739931/a688/ee3c/eafe/1dee40f2668d5c719eafa2c89296f5e7.png
+    - name: 知乎
+      # url: https://www.zhihu.com/people/MoyuScript
+      icon: https://www.zhihu.com/favicon.ico
