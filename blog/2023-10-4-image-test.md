@@ -1,6 +1,7 @@
 ---
 authors: bkt
 image: https://s2.loli.net/2023/10/04/s7zq4L1QNiM9fWk.png
+tags: [博文测试]
 ---
 
 # 图床测试
