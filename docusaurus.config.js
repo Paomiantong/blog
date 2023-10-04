@@ -85,7 +85,7 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: "img/docusaurus-social-card.jpg",
+      //   image: "img/docusaurus-social-card.jpg",
       navbar: {
         title: "My Site",
         // logo: {
@@ -103,15 +103,6 @@ const config = {
       },
       footer: {
         links: [
-          {
-            title: "Docs",
-            items: [
-              {
-                label: "Tutorial",
-                to: "/docs/intro",
-              },
-            ],
-          },
           {
             title: "Community",
             items: [
@@ -132,10 +123,6 @@ const config = {
           {
             title: "More",
             items: [
-              {
-                label: "Blog",
-                to: "/blog",
-              },
               {
                 label: "GitHub",
                 href: "https://github.com/facebook/docusaurus",
