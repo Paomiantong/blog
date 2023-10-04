@@ -7,7 +7,7 @@ const path = require("path");
 const lightCodeTheme = require("prism-react-renderer/themes/github");
 const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
-const baseUrl = "/bkt";
+const baseUrl = "/blog";
 const url = "https://paomiantong.github.io";
 
 /** @type {import('@docusaurus/types').Config} */
