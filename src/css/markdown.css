@@ -1,0 +1,83 @@
+.markdown {
+  --b1: 100% 0 0;
+  --a: 0.7615079135428947 0.09231108114676398 142.7893255428089;
+  --docusaurus-highlighted-code-line-bg: rgba(72, 77, 91, 0.151);
+
+  font-weight: 300;
+
+  & > blockquote {
+    --ifm-blockquote-border-left-width: 3px;
+    --ifm-blockquote-border-color: var(--fallback-a, oklch(var(--a) / 1));
+    --ifm-blockquote-font-size: 15.4px;
+    --ifm-spacing-vertical: 0.25rem;
+    font-weight: 500;
+    font-style: italic;
+    /* color: var(--tw-prose-quotes); */
+    /* border-inline-start-width: 0.25rem;
+    border-inline-start-color: var(--tw-prose-quote-borders); */
+    quotes: "\201C""\201D""\2018""\2019";
+    margin-top: 1.6em;
+    margin-bottom: 1.6em;
+    padding-inline-start: 1em;
+    & > p::before {
+      content: open-quote;
+    }
+    & > p::after {
+      content: close-quote;
+    }
+    /* border-radius: 1em; */
+  }
+
+  & > h2 {
+    --ifm-h2-font-size: 1.5em;
+  }
+  & > p {
+    overflow-wrap: break-word;
+  }
+
+  & > p a {
+    @apply no-underline font-medium;
+    color: currentColor;
+    background-image: linear-gradient(
+      var(--ifm-color-primary),
+      var(--ifm-color-primary)
+    );
+    background-size: 0 1.5px;
+    background-repeat: no-repeat;
+    transition: all 0.5s ease;
+    border-width: 0;
+    text-decoration-line: none;
+    background-position: left 1.3em;
+
+    &:hover {
+      background-size: 100% 1.5px;
+      text-shadow: 0.05em 0 var(--fallback-b1, oklch(var(--b1) / 1)),
+        -0.05em 0 var(--fallback-b1, oklch(var(--b1) / 1));
+      transition: all 0.25s ease;
+    }
+  }
+  .spoiler {
+    position: relative;
+
+    transition: background 0.5s;
+    text-decoration: none;
+    border-radius: 3px;
+
+    @apply bg-current text-stone-700 dark:text-neutral-500 print:!bg-transparent print:line-through;
+
+    &:hover {
+      background: transparent;
+    }
+
+    &:not(:hover) * {
+      @apply !text-inherit;
+    }
+  }
+}
+
+[data-theme="dark"] {
+  .markdown {
+    /* Color which works with dark mode syntax highlighting theme */
+    --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.08);
+  }
+}

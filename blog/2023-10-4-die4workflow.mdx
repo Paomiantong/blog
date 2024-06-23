@@ -1,0 +1,30 @@
+---
+authors: bkt
+tags: [踩坑]
+image: https://s2.loli.net/2023/10/04/Q3DwVnh2SpF9kKG.png
+---
+
+import { Mark, Spoiler } from "@site/src/components/Extend";
+
+# 关于萌新第一次使用GitHub Actions部署GitHub Pages疯狂失败这件事
+
+**惨案经过**：看到别人用Actions来部署自己的blog到 <Mark>**GitHub Pages**</Mark> 上，我觉得这泰裤辣，于是鼓捣一下午坐到腰疼才部署成功。
+
+$--truncate--$
+
+## 坑一 需要用公共仓库
+
+本来想用私有仓库来存储自己的博文，但是因为不可抗力的原因（可能有别的办法？反正我是菜鸡），最终还是公开了仓库。
+
+**罪魁祸首**：<Mark>**GitHub Pages**</Mark> 只能在公共仓库使用（除非你有米）。并且`deploy-pages`这个action需要用到GitHub仓库的`environment`。我翻遍了Settings页面也没找到这玩意TAT。最后发现需要公共仓库才有这玩意，kuso😡。
+
+![可恶的enviroment](https://s2.loli.net/2023/10/04/OYw7n6gy2j9C5GN.png)
+
+## 坑二 不能有启用了 GitHub Pages 的仓库
+
+如果已经有了启用了 <Mark>**GitHub Pages**</Mark> 仓库（xxxxx.github.io）就会冲突（好像有米也可以？）
+
+## 总结
+
+<Spoiler>还是自己太菜了，</Spoiler>
+对Actions和Pages这两个功能还没有很细致的了解，还处于照猫画虎的阶段，之后有机会需要好好学习一下😭😭😭

@@ -1,3 +1,10 @@
 .navbar {
-    background: url('@site/static/banner.jpg');
+  background: url("@site/static/banner.jpg");
+}
+
+.navbar-link {
+  color: var(--ifm-color-white);
+  text-decoration: none;
+  font-weight: bold;
+  margin-right: 1rem;
 }

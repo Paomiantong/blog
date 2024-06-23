@@ -1,0 +1,92 @@
+---
+slug: /how2usehusky
+title: Husky🐶使用小心得
+date: 2024-06-23
+---
+
+根据[Husky官网文档](https://typicode.github.io/husky/get-started.html)一步一步安装使用Husky🐶，并添加`lint-staged`等
+$--truncate--$
+
+## 安装
+
+第一步，根据官方文档，使用包管理器安装安装Husky，我这边使用的是[pnpm](https://pnpm.io/)。
+
+```sh
+pnpm add --save-dev husky
+```
+
+## 初始化
+
+:::tip
+init命令简化了在项目中设置husky的过程。它在.husty/中创建了一个预提交脚本，并在package.json中更新了prepare脚本。稍后可以进行修改以适应您的工作流程。
+:::
+安装完成之后，执行`husky init`命令，来初始化Husky。
+
+```sh
+pnpm exec husky init
+```
+
+初始化之后，目录下会自动生成`.husky`文件夹，里有一个`_`文件夹和`pre-commit`钩子。接下来就可以在`pre-commit`钩子中添加自己的脚本了，或是使用其他的钩子。
+
+```sh
+// highlight-next-line
+.husky
+├─pre-commit
+└─_
+```
+
+```sh title=".husky/pre-commit" showLineNumbers
+pnpm test
+
+```
+
+## 添加`lint-staged`
+
+[lint-staged](https://github.com/lint-staged/lint-staged#readme)是一个流行的工具，通常与`pre-commit`钩子一起使用，用于在提交更改到代码仓库之前自动运行linters和其他代码格式化工具。它的主要目的是确保只对暂存的文件（即那些已经添加到Git暂存区的文件）运行这些工具，从而节省时间并只关注那些即将提交的更改。
+
+```sh
+pnpm add --save-dev lint-staged
+```
+
+然后在`package.json`中添加`lint-staged`配置。
+
+```json title="package.json" showLineNumbers
+{
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": "eslint --fix",
+    "*.{md,mdx}": "markdownlint --fix",
+    // 对于多条指令，可以使用数组指定
+    // highlight-start
+    "src/**/*.{js,jsx,ts,tsx,vue}": ["prettier --write", "eslint --fix"]
+    // highlight-end
+  }
+}
+```
+
+最后修改`pre-commit`钩子，以便在提交前自动触发，进行格式化和lint。
+
+```sh title=".husky/pre-commit" showLineNumbers
+pnpm test
+
+```
+
+## 添加`commit-lint`
+
+[commitlint](https://commitlint.js.org/guides/getting-started)用于检查 Git 提交消息是否遵循预定义的风格指南。这个工具非常有助于维持项目中提交历史的清晰和一致性，特别是在团队环境中，不同的开发者可能习惯于使用不同的提交消息格式。
+
+```sh
+pnpm add --save-dev @commitlint/cli @commitlint/config-conventional
+```
+
+安装完成后，在`package.json`同级目录下创建`commitlint.config.js`以配置`commitlint`。
+
+```js title="commitlint.config.js"
+export default { extends: ["@commitlint/config-conventional"] };
+```
+
+配置完成后，需要在`.husky`目录下新建`commit-msg`钩子，以便在提交时自动触发`commitlint`。
+
+```sh title=".husky/commit-msg" showLineNumbers
+npx --no -- commitlint --edit ${1}
+
+```
