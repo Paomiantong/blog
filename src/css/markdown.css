@@ -15,7 +15,7 @@
     /* color: var(--tw-prose-quotes); */
     /* border-inline-start-width: 0.25rem;
     border-inline-start-color: var(--tw-prose-quote-borders); */
-    quotes: "\201C""\201D""\2018""\2019";
+    quotes: "\201C" "\201D" "\2018" "\2019";
     margin-top: 1.6em;
     margin-bottom: 1.6em;
     padding-inline-start: 1em;
@@ -51,7 +51,8 @@
 
     &:hover {
       background-size: 100% 1.5px;
-      text-shadow: 0.05em 0 var(--fallback-b1, oklch(var(--b1) / 1)),
+      text-shadow:
+        0.05em 0 var(--fallback-b1, oklch(var(--b1) / 1)),
         -0.05em 0 var(--fallback-b1, oklch(var(--b1) / 1));
       transition: all 0.25s ease;
     }
