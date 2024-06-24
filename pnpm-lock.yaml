@@ -23,12 +23,12 @@ importers:
       clsx:
         specifier: ^2.0.0
         version: 2.1.1
+      docusaurus-plugin-image-zoom:
+        specifier: ^2.0.0
+        version: 2.0.0(@docusaurus/theme-classic@3.4.0(@types/react@18.3.3)(eslint@8.57.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.2.2))
       pangu:
         specifier: ^4.0.7
         version: 4.0.7
-      plugin-image-zoom:
-        specifier: github:flexanalytics/plugin-image-zoom
-        version: git+https://git@github.com:flexanalytics/plugin-image-zoom.git#8e1b866c79ed6d42cefc4c52f851f1dfd1d0c7de
       prism-react-renderer:
         specifier: ^2.3.0
         version: 2.3.1(react@18.3.1)
@@ -2451,6 +2451,11 @@ packages:
     resolution: {integrity: sha512-yS+Q5i3hBf7GBkd4KG8a7eBNNWNGLTaEwwYWUijIYM7zrlYDM0BFXHjjPWlWZ1Rg7UaddZeIDmi9jF3HmqiQ2w==}
     engines: {node: '>=6.0.0'}
 
+  docusaurus-plugin-image-zoom@2.0.0:
+    resolution: {integrity: sha512-TWHQZeoiged+95CESlZk++lihzl3pqw34n0/fbexx2AocmFhbo9K2scYDgYB8amki4/X6mUCLTPZE1pQvT+00Q==}
+    peerDependencies:
+      '@docusaurus/theme-classic': '>=3.0.0'
+
   dom-converter@0.2.0:
     resolution: {integrity: sha512-gd3ypIPfOMr9h5jIKq8E3sHOTCjeirnl0WK5ZdS1AW0Odt0b1PaWaHdJ4Qk4klv+YB9aJBS7mESXjFoDQPu6DA==}
 
@@ -4393,6 +4398,14 @@ packages:
   path-parse@1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
 
+  path-root-regex@0.1.2:
+    resolution: {integrity: sha512-4GlJ6rZDhQZFE0DPVKh0e9jmZ5egZfxTkp7bcRDuPlJXbAwhxcl2dINPUAsjLdejqaLsCeg8axcLjIbvBjN4pQ==}
+    engines: {node: '>=0.10.0'}
+
+  path-root@0.1.1:
+    resolution: {integrity: sha512-QLcPegTHF11axjfojBIoDygmS2E3Lf+8+jI6wOVmNVenrKSo3mFdSGiIgdSHenczw3wPtlVMQaFVwGmM7BJdtg==}
+    engines: {node: '>=0.10.0'}
+
   path-scurry@1.11.1:
     resolution: {integrity: sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA==}
     engines: {node: '>=16 || 14 >=14.18'}
@@ -4440,10 +4453,6 @@ packages:
   pkg-up@3.1.0:
     resolution: {integrity: sha512-nDywThFk1i4BQK4twPQ6TA4RT8bDY96yeuCVBWL3ePARCiEKDRSrNGbFIgUJpLp+XeIR65v8ra7WuJOFUBtkMA==}
     engines: {node: '>=8'}
-
-  plugin-image-zoom@git+https://git@github.com:flexanalytics/plugin-image-zoom.git#8e1b866c79ed6d42cefc4c52f851f1dfd1d0c7de:
-    resolution: {commit: 8e1b866c79ed6d42cefc4c52f851f1dfd1d0c7de, repo: git@github.com:flexanalytics/plugin-image-zoom.git, type: git}
-    version: 1.1.0
 
   possible-typed-array-names@1.0.0:
     resolution: {integrity: sha512-d7Uw+eZoloe0EHDIYoe+bQ5WXnGMOpmiZFTuMWCwpjzzkL2nTjcKiAk4hh8TjnGye2TwWOk3UXucZ+3rbmBa8Q==}
@@ -5003,6 +5012,10 @@ packages:
   resolve-from@5.0.0:
     resolution: {integrity: sha512-qYg9KP24dD5qka9J47d0aVky0N+b4fTU89LN9iDnjB5waksiC49rvMB0PrUJQGoTmH50XPiqOvAjDfaijGxYZw==}
     engines: {node: '>=8'}
+
+  resolve-package-path@4.0.3:
+    resolution: {integrity: sha512-SRpNAPW4kewOaNUt8VPqhJ0UMxawMwzJD8V7m1cJfdSTK9ieZwS6K7Dabsm4bmLFM96Z5Y/UznrpG5kt1im8yA==}
+    engines: {node: '>= 12'}
 
   resolve-pathname@3.0.0:
     resolution: {integrity: sha512-C7rARubxI8bXFNB/hqcp/4iUeIXJhJZvFPFPiSPRnhU5UPxzMFIl+2E6yY6c4k9giDJAhtV+enfA+G89N6Csng==}
@@ -5671,6 +5684,10 @@ packages:
     resolution: {integrity: sha512-+g8ENReyr8YsOc6fv/NVJs2vFdHBnBNdfE49rshrTzDWOlUx4Gq7KOS2GD8eqhy2j+Ejq29+SbKH8yjkAqXqoA==}
     engines: {node: '>=8'}
     hasBin: true
+
+  validate-peer-dependencies@2.2.0:
+    resolution: {integrity: sha512-8X1OWlERjiUY6P6tdeU9E0EwO8RA3bahoOVG7ulOZT5MqgNDUO/BQoVjYiHPcNe+v8glsboZRIw9iToMAA2zAA==}
+    engines: {node: '>= 12'}
 
   value-equal@1.0.1:
     resolution: {integrity: sha512-NOJ6JZCAWr0zlxZt+xqCHNTEKOsrks2HQd4MqhP1qy4z1SkbEP467eNx6TgDKXMvUOb+OENfJCZwM+16n7fRfw==}
@@ -9212,6 +9229,12 @@ snapshots:
     dependencies:
       esutils: 2.0.3
 
+  docusaurus-plugin-image-zoom@2.0.0(@docusaurus/theme-classic@3.4.0(@types/react@18.3.3)(eslint@8.57.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.2.2)):
+    dependencies:
+      '@docusaurus/theme-classic': 3.4.0(@types/react@18.3.3)(eslint@8.57.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.2.2)
+      medium-zoom: 1.1.0
+      validate-peer-dependencies: 2.2.0
+
   dom-converter@0.2.0:
     dependencies:
       utila: 0.4.0
@@ -11644,6 +11667,12 @@ snapshots:
 
   path-parse@1.0.7: {}
 
+  path-root-regex@0.1.2: {}
+
+  path-root@0.1.1:
+    dependencies:
+      path-root-regex: 0.1.2
+
   path-scurry@1.11.1:
     dependencies:
       lru-cache: 10.2.2
@@ -11682,10 +11711,6 @@ snapshots:
   pkg-up@3.1.0:
     dependencies:
       find-up: 3.0.0
-
-  plugin-image-zoom@git+https://git@github.com:flexanalytics/plugin-image-zoom.git#8e1b866c79ed6d42cefc4c52f851f1dfd1d0c7de:
-    dependencies:
-      medium-zoom: 1.1.0
 
   possible-typed-array-names@1.0.0: {}
 
@@ -12308,6 +12333,10 @@ snapshots:
   resolve-from@4.0.0: {}
 
   resolve-from@5.0.0: {}
+
+  resolve-package-path@4.0.3:
+    dependencies:
+      path-root: 0.1.1
 
   resolve-pathname@3.0.0: {}
 
@@ -13095,6 +13124,11 @@ snapshots:
       diff: 5.2.0
       kleur: 4.1.5
       sade: 1.8.1
+
+  validate-peer-dependencies@2.2.0:
+    dependencies:
+      resolve-package-path: 4.0.3
+      semver: 7.6.2
 
   value-equal@1.0.1: {}
 

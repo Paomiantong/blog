@@ -85,7 +85,7 @@ const config: Config = {
   ],
 
   themeConfig: {
-    imageZoom: {
+    zoom: {
       selector: ".markdown :not(em) > img",
     },
     navbar: {
@@ -177,7 +177,7 @@ const config: Config = {
         },
       };
     },
-    "plugin-image-zoom",
+    "docusaurus-plugin-image-zoom",
   ],
 };
 
