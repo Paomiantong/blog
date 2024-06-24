@@ -2,12 +2,14 @@
 slug: /how2usehusky
 title: Husky🐶使用小心得
 date: 2024-06-23
+image: https://s2.loli.net/2024/06/24/cyHZlgQNETKCPam.png
+tags: ["技术"]
 ---
 
 import { Mark } from "@site/src/components/Extend";
 
 根据[Husky官网文档](https://typicode.github.io/husky/get-started.html)一步一步安装使用<Mark>Husky🐶</Mark>，并添加`lint-staged`和`commit-lint`来完善Git提交工作流。
-$--truncate--$
+{/* truncate */}
 
 ## 安装
 
@@ -20,7 +22,7 @@ pnpm add --save-dev husky
 ## 初始化
 
 :::tip
-init命令简化了在项目中设置husky的过程。它在.husty/中创建了一个预提交脚本，并在package.json中更新了prepare脚本。稍后可以进行修改以适应您的工作流程。
+`init`命令简化了项目中的husky设置。它会在`.husky/`中创建`pre-commit`脚本，并更新`package.json`中的`prepare`脚本。随后可根据你的工作流进行修改。
 :::
 安装完成之后，执行`husky init`命令，来初始化Husky。
 

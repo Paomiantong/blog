@@ -61,18 +61,33 @@ const config: Config = {
           blogSidebarCount: 0,
           remarkPlugins: [
             require("./src/extend/remark-spacing"),
-            require("./src/extend/remark-custom-truncate"),
+            // require("./src/extend/remark-custom-truncate"),
           ],
-          truncateMarker: /\$--\s*(truncate)\s*--\$/,
+          //   truncateMarker: /\$--\s*(truncate)\s*--\$/,
         },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
+        },
+        sitemap: {
+          lastmod: "date",
+          changefreq: "weekly",
+          priority: 0.5,
+          ignorePatterns: ["/tags/**"],
+          filename: "sitemap.xml",
+          createSitemapItems: async (params) => {
+            const { defaultCreateSitemapItems, ...rest } = params;
+            const items = await defaultCreateSitemapItems(rest);
+            return items.filter((item) => !item.url.includes("/page/"));
+          },
         },
       },
     ],
   ],
 
   themeConfig: {
+    imageZoom: {
+      selector: ".markdown :not(em) > img",
+    },
     navbar: {
       title: "My Site",
       // logo: {
@@ -162,6 +177,7 @@ const config: Config = {
         },
       };
     },
+    "plugin-image-zoom",
   ],
 };
 

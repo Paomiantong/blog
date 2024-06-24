@@ -1,0 +1,31 @@
+---
+slug: /use-picgo-in-vscode
+title: 在VSCode里使用PicGo
+date: 2024-06-24
+image: https://s2.loli.net/2024/06/24/oeSjkfmaVuwd5bA.png
+tags: ["技术", "踩坑"]
+---
+
+import { Mark, Kbd, Spoiler } from "@site/src/components/Extend";
+
+今天早上鼓捣<Mark>PicGo</Mark>的时候发现有一个VSCode的[PicGo扩展](https://github.com/PicGo/vs-picgo)，于是就下载来体验了一下。
+
+{/* truncate */}
+
+## 配置
+
+安装完扩展后，可以选择使用外部PicGo的配置![20240624124417](https://s2.loli.net/2024/06/24/D5eYIEuRTgJCV4A.png)
+:::warning
+**一定要确保配置文件路径正确**，否则在上传图片时，会提示命令不存在。
+:::
+
+## 使用
+
+只尝试了上传剪贴板的功能，快捷键是<Kbd k={["Ctrl","Alt","U"]} />。<Spoiler>要是可以和Typora一样粘贴时自动上传就好了TAT</Spoiler>
+![Done](https://s2.loli.net/2024/06/24/MaVi1t54xXBTRwv.png)
+
+上传完成后会在光标位置自动插入markdown格式的图片链接。
+
+```md
+![20240624124417](https://s2.loli.net/2024/06/24/D5eYIEuRTgJCV4A.png)
+```

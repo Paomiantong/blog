@@ -28,24 +28,10 @@ export default function MDXA(props: Props): React.JSX.Element {
 
   const { icon, color } = iconSet;
   return (
-    <span style={{ display: "inline-flex", gap: "0.25rem" }}>
-      {icon && (
-        <Icon
-          className="a-icon"
-          style={{ alignSelf: "center", color }}
-          icon={icon}
-          width={16}
-          height={16}
-        />
-      )}
+    <span className="inline-flex items-center justify-center gap-1">
+      {icon && <Icon color={color} icon={icon} width={12} className="ml-1" />}
       <Link {...props} />
-      <Icon
-        style={{ alignSelf: "center" }}
-        className="a-icon"
-        icon="mingcute:external-link-line"
-        width={16}
-        height={16}
-      />
+      <Icon icon="mingcute:external-link-line" width={12} />
     </span>
   );
 
