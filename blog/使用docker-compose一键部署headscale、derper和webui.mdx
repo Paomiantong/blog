@@ -1,0 +1,320 @@
+---
+slug: /depoly-headscale-by-docker-compose
+title: 使用docker-compose一键部署headscale、derper和webui
+date: 2025-01-23
+image: https://s2.loli.net/2025/01/23/BhAaD46NYKnHrtc.png
+tags: ["headscale", "docker", "技术", "踩坑"]
+---
+
+之前在sealos上部署过headscale、derper和webui，但是由于sealos的一些问题，导致headscale无法正常使用。最近申请的域名备案也成功通过了，所以这次我尝试使用docker-compose在阿里云上部署headscale、derper和webui。
+
+## 前提条件
+
+- 一台具有公网IP的服务器
+- 一个域名(需要两个二级域名，一个用于headscale和webui，一个用于derper)
+- 域名证书(可以使用[acme.sh](https://github.com/acmesh-official/acme.sh)申请免费证书)
+- 占用以下端口
+  - `tcp 58080` (headscale server)
+  - `tcp 57070` (headscale webui)
+  - `tcp 56060` (headscale derp)
+  - `udp 3478` (headscale derp stun)
+
+## 部署headscale、derper和webui
+
+首先，需要在服务器上安装docker和docker-compose。[参考](https://blog.csdn.net/menglinjie/article/details/142555893)
+
+然后，我们需要在服务器上创建一个目录，用于存放相关文件，结构如下。
+
+```
+➜  headscale tree
+.
+├── docker-compose.yaml
+├── dockerfiles
+│   └── derp.Dockerfile
+├── headscale
+│   └── config
+│       ├── config.yaml
+│       └── derp.yaml
+└──  nginx
+    ├── derp.conf
+    └── headscale.conf
+```
+
+### docker-compose.yaml
+
+compose文件仅部署了headscale、headscale-admin、derp、client，请按需进行修改。
+:::warning
+要提前配置好config.yaml和derp.yaml，并放入headscale/config文件夹内，可以去[headscale](https://github.com/juanfont/headscale/tree/main)的代码仓下载config-example.yaml和derp-example.yaml。内容可以参考[配置文件](#配置文件)部分
+:::
+
+```yaml title="docker-compose.yaml" showLineNumbers
+# docker-compose.yaml
+version: "3.9"
+networks:
+  private:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.200.0/24
+
+services:
+  server:
+    image: headscale/headscale:latest-debug
+    container_name: headscale-server
+    networks:
+      - private
+    volumes:
+      - ./headscale/config:/etc/headscale
+      - ./headscale/data:/var/lib/headscale
+      - ./headscale/run:/var/run/headscale
+      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+    ports:
+      - "58080:8080"
+    command: serve
+    restart: unless-stopped
+    depends_on:
+      - derp
+
+  webui:
+    image: goodieshq/headscale-admin:latest
+    container_name: headscale-ui
+    networks:
+      - private
+    environment:
+      PORT: 7070
+    ports:
+      - "57070:7070"
+    volumes:
+      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+    restart: unless-stopped
+
+  derp:
+    build:
+      context: ./dockerfiles
+      dockerfile: derp.Dockerfile
+    container_name: headscale-derp
+    networks:
+      - private
+    environment:
+      DERP_DOMAIN: hsderp.example.com
+      DERP_ADDR: :6060
+      DERP_CERT_MODE: letsencrypt
+      DERP_VERIFY_CLIENTS: true
+    ports:
+      - "56060:6060" # derp port, TCP
+      - "3478:3478/udp" # STUN port, UDP
+    volumes:
+      - ./tailscale:/var/run/tailscale
+      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+    restart: unless-stopped
+
+  client:
+    image: tailscale/tailscale:stable
+    container_name: tailscale-client
+    network_mode: "host"
+    privileged: true
+    environment:
+      TS_EXTRA_ARGS: --netfilter-mode = off
+    volumes:
+      - ./tailscale:/var/run/tailscale
+      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+      - /var/lib:/var/lib
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    command: tailscaled
+    restart: unless-stopped
+```
+
+### derp.Dockerfile
+
+因derp镜像更新不及时，所以需要手动构建，需将derp.Dockerfile放入dockerfiles文件夹内。
+
+```dockerfile title="dockerfiles/derp.Dockerfile" showLineNumbers
+FROM golang:alpine AS builder
+
+WORKDIR /app
+
+# https://tailscale.com/kb/1118/custom-derp-servers/
+RUN go env -w GOPROXY=https://goproxy.io,direct
+RUN go install tailscale.com/cmd/derper@latest
+
+
+FROM alpine:3.21
+
+WORKDIR /app
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN mkdir /lib64 && ln -s /lib/libc.musl-x86_64.so.1 /lib64/ld-linux-x86-64.so.2
+RUN apk add --no-cache ca-certificates iptables iproute2 ip6tables curl && \
+    mkdir /app/certs
+
+RUN apk add gcompat
+
+ENV DERP_DOMAIN=your-hostname.com
+ENV DERP_CERT_MODE=letsencrypt
+ENV DERP_CERT_DIR=/app/certs
+ENV DERP_ADDR=:443
+ENV DERP_STUN=true
+ENV DERP_STUN_PORT=3478
+ENV DERP_HTTP_PORT=80
+ENV DERP_VERIFY_CLIENTS=false
+ENV DERP_VERIFY_CLIENT_URL=""
+COPY --from=builder /go/bin/* /usr/local/bin/
+
+CMD /usr/local/bin/derper --hostname=$DERP_DOMAIN \
+    --certmode=$DERP_CERT_MODE \
+    --certdir=$DERP_CERT_DIR \
+    --a=$DERP_ADDR \
+    --stun=$DERP_STUN \
+    --stun-port=$DERP_STUN_PORT \
+    --http-port=$DERP_HTTP_PORT \
+    --verify-clients=$DERP_VERIFY_CLIENTS \
+    --verify-client-url=$DERP_VERIFY_CLIENT_URL
+```
+
+### 使用docker-compose部署
+
+在headscale目录下执行以下命令，即可部署headscale、derp和webui。
+
+```bash
+sudo docker-compose up -d
+```
+
+## 配置文件
+
+```yaml title="headscale/config/config.yaml" showLineNumbers
+...
+
+server_url: https://hs.example.com
+listen_addr: 0.0.0.0:8080
+metrics_listen_addr: 0.0.0.0:9090
+grpc_listen_addr: 0.0.0.0:50443
+
+...
+
+derp:
+
+  ...
+
+  urls: []
+  paths:
+    - /etc/headscale/derp.yaml
+```
+
+:::warning
+这里只展示headscale/config/config.yaml的部分配置，其他配置请参考[config-example.yaml](https://github.com/juanfont/headscale/blob/main/config-example.yaml)。
+:::
+
+```yaml title="headscale/config/derp.yaml" showLineNumbers
+regions:
+  999:
+    regionid: 999
+    regioncode: cnbj
+    regionname: Aliyun Beijing
+    nodes:
+      - name: derp
+        regionid: 999
+        hostname: hsderp.example.com
+        stunport: 3478
+        stunonly: false
+        derpport: 443
+```
+
+## nginx配置
+
+在nginx.conf的http块中include以下配置文件以实现反向代理。
+
+```nginx title="headscale.conf" showLineNumbers
+server {
+    listen 443 ssl;
+    server_name hs.example.com;;
+
+    location ^~ / {
+        proxy_pass http://127.0.0.1:58080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header REMOTE-HOST $remote_addr;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+        add_header X-Cache $upstream_cache_status;
+        add_header Strict-Transport-Security "max-age=31536000";
+        add_header Cache-Control no-cache;
+    }
+
+    location ^~ /admin {
+        proxy_pass http://127.0.0.1:57070;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header REMOTE-HOST $remote_addr;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+        add_header X-Cache $upstream_cache_status;
+        add_header Strict-Transport-Security "max-age=31536000";
+        add_header Cache-Control no-cache;
+    }
+}
+
+server {
+    listen 80;
+    server_name hs.example.com;;
+    return 301 https://$host$request_uri;
+}
+```
+
+```nginx title="derp.conf" showLineNumbers
+server {
+    listen 443 ssl;
+    server_name hsderp.example.com;;
+
+    location ^~ / {
+        proxy_pass http://127.0.0.1:56060;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header REMOTE-HOST $remote_addr;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_http_version 1.1;
+        add_header X-Cache $upstream_cache_status;
+        add_header Strict-Transport-Security "max-age=31536000";
+    }
+}
+
+server {
+    listen 80;
+    server_name hsderp.example.com;;
+    return 301 https://$host$request_uri;
+}
+```
+
+## 测试
+
+在浏览器中打开https://hs.example.com/admin 及 https://haderp.example.com 若均可看到相关页面，说明部署成功。
+:::warning
+因为开启了DERP_VERIFY_CLIENTS，所以在所有服务部署成功后，需要手动把tailscale-client添加到headscale中，derper才能正常使用。
+使用以下命令进入tailscale-client容器，在headscale admin页面点击deploy然后复制对应的命令以连接headscale。
+
+```bash
+sudo docker exec -it tailscale-client /bin/sh
+```
+
+:::
+![admin](https://s2.loli.net/2025/01/23/HMOcgjbQUvopyh6.png)
+:::tip
+这是我部署使用后的headscale admin页面，所以已经有设备和用户，刚部署好的所有数字应该都是0。
+:::
+![derp](https://s2.loli.net/2025/01/23/wzQxDYWKv2CgpTG.png)
+
+## 参考
+
+- https://www.bokro.cn/archives/255
+- https://github.com/acmesh-official/acme.sh/wiki/%E8%AF%B4%E6%98%8E
