@@ -1,5 +1,3 @@
-import Spoiler from "./Spoiler";
-import Mark from "./Mark";
-import Kbd from "./Kbd";
-
-export { Spoiler, Mark, Kbd };
+export { default as Spoiler } from "./Spoiler";
+export { default as Mark } from "./Mark";
+export { default as Kbd } from "./Kbd";
